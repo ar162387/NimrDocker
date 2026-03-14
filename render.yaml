@@ -4,8 +4,9 @@ services:
   # ==========================================
   - type: pserv
     name: mariadb
-    env: docker
-    image: mariadb:10.6
+    env: image
+    image:
+      imagePath: mariadb:10.6
     disk:
       name: mariadb-data
       mountPath: /var/lib/mysql
@@ -25,21 +26,24 @@ services:
   # ==========================================
   - type: pserv
     name: redis-cache
-    env: docker
-    image: redis:6.2-alpine
+    env: image
+    image:
+      imagePath: redis:6.2-alpine
 
   - type: pserv
     name: redis-queue
-    env: docker
-    image: redis:6.2-alpine
+    env: image
+    image:
+      imagePath: redis:6.2-alpine
 
   # ==========================================
   # 3. BACKEND (Gunicorn)
   # ==========================================
   - type: pserv
     name: backend
-    env: docker
-    image: frappe/erpnext:v15.0.0 # Change version as needed
+    env: image
+    image:
+      imagePath: frappe/erpnext:v15.0.0 # Change version as needed
     disk:
       name: site-data
       mountPath: /home/frappe/frappe-bench/sites
@@ -59,14 +63,15 @@ services:
   # ==========================================
   - type: pserv
     name: websocket
-    env: docker
-    image: frappe/erpnext:v15.0.0
+    env: image
+    image:
+      imagePath: frappe/erpnext:v15.0.0
     # Must use the same persistent disk to share files if needed
     disk:
       name: site-data
       mountPath: /home/frappe/frappe-bench/sites
       sizeGB: 5
-    command: node /home/frappe/frappe-bench/apps/frappe/socketio.js
+    dockerCommand: node /home/frappe/frappe-bench/apps/frappe/socketio.js
     envVars:
       - key: REDIS_QUEUE
         value: redis-queue:6379
@@ -76,9 +81,10 @@ services:
   # ==========================================
   - type: worker
     name: queue-short
-    env: docker
-    image: frappe/erpnext:v15.0.0
-    command: bench worker --queue short,default
+    env: image
+    image:
+      imagePath: frappe/erpnext:v15.0.0
+    dockerCommand: bench worker --queue short,default
     envVars:
       - key: DB_HOST
         value: mariadb
@@ -89,9 +95,10 @@ services:
 
   - type: worker
     name: queue-long
-    env: docker
-    image: frappe/erpnext:v15.0.0
-    command: bench worker --queue long,default,short
+    env: image
+    image:
+      imagePath: frappe/erpnext:v15.0.0
+    dockerCommand: bench worker --queue long,default,short
     envVars:
       - key: DB_HOST
         value: mariadb
@@ -102,9 +109,10 @@ services:
 
   - type: worker
     name: scheduler
-    env: docker
-    image: frappe/erpnext:v15.0.0
-    command: bench schedule
+    env: image
+    image:
+      imagePath: frappe/erpnext:v15.0.0
+    dockerCommand: bench schedule
     envVars:
       - key: DB_HOST
         value: mariadb
@@ -118,8 +126,9 @@ services:
   # ==========================================
   - type: web
     name: frontend
-    env: docker
-    image: frappe/erpnext-nginx:v15.0.0
+    env: image
+    image:
+      imagePath: frappe/erpnext-nginx:v15.0.0
     # Nginx also needs access to the sites volume for static assets
     disk:
       name: site-data
@@ -142,4 +151,3 @@ services:
         value: "120"
       - key: CLIENT_MAX_BODY_SIZE
         value: 50m
-
