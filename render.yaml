@@ -43,7 +43,7 @@ services:
     name: backend
     env: image
     image:
-      url: frappe/erpnext:v15.0.0 # Change version as needed
+       url: frappe/erpnext:v16.9.0 # Change version as needed
     disk:
       name: site-data
       mountPath: /home/frappe/frappe-bench/sites
